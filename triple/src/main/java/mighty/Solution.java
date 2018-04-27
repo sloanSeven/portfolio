@@ -39,13 +39,10 @@ public class Solution {
 		return list.toArray(new Integer[list.size()]);
 	}
 
-	public Person createId(String[] values) {
+	public Person createPerson(String[] values) {
 		Person p = new Person(generateId());
 		for (String key : values) {
 			p.addIdentifier(key);
-			if (idMap.containsKey(values)) {
-				throw new RuntimeException("really?");
-			}
 			idMap.put(key, p);
 		}
 		p.addIdentifier(p.getId());
@@ -54,9 +51,6 @@ public class Solution {
 	}
 
 	public Person getPerson(String key) {
-		if (key == null || key.trim().equals("")) {
-			return null;
-		}
 		Person id = idMap.get(key);
 		return id;
 	}
@@ -74,24 +68,24 @@ public class Solution {
 
 	public Person identify(String[] values) {
 
-		final ArrayList<Person> list = new ArrayList<>();
+		final ArrayList<Person> refList = new ArrayList<>();
 
 		for (String s : values) {
 			if ("".equals(s)) {
 				continue;
 			}
 			Person person = getPerson(s);
-			if (person != null) {
-				list.add(person);
+			if (person != null && !refList.contains(person)) {
+				refList.add(person);
 			}
 		}
 
-		final Person original = (list.isEmpty()) ? createId(values) : list.get(0);
+		final Person original = (refList.isEmpty()) ? createPerson(values) : refList.get(0);
 		for (String key : values) {
 			original.addIdentifier(key);
 		}
 
-		for (Person person : list) {
+		for (Person person : refList) {
 			for (String key : person.getIdentifierList()) {
 				if (original != person) {
 					original.addIdentifier(key);
@@ -104,22 +98,24 @@ public class Solution {
 
 	private void solve(String args) {
 
-		String[] split = args.split(",");
-		String line = utils.readLine();
-		final Integer[] match = findIndexes(line, split);
+		final String[] split = args.split(",");
+		final String header = utils.readLine();
+		final Integer[] match = findIndexes(header, split);
 		final String[] valueArray = new String[match.length];
+		final ArrayList<String> lineList = new ArrayList<>();
+		final String output = "output.csv";
 
-		ArrayList<String> lineList = new ArrayList<>();
-
+		String line = null;
 		while ((line = utils.readLine()) != null) {
 			parseIdentifiers(line, match, valueArray);
 			Person p = identify(valueArray);
 			lineList.add(p.getId());
 			lineList.add(line);
 		}
+		utils.write(output, "uuid," + header + "\n");
 		for (int i = 0; i < lineList.size(); i += 2) {
 			Person person = getPerson(lineList.get(i));
-			p(person.getId() + "," + lineList.get(i + 1));
+			utils.write(output, (person.getId() + "," + lineList.get(i + 1)) + "\n");
 		}
 	}
 
