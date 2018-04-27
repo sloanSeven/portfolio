@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import utils.FileUtils;
 
-public class Solution {
+public class MightySolution {
 
 	private FileUtils utils;
 	private HashMap<String, Person> idMap = new HashMap<>();
@@ -16,7 +16,7 @@ public class Solution {
 		System.out.println(o);
 	}
 
-	public Solution(String file) {
+	public MightySolution(String file) {
 		this.utils = new FileUtils(file);
 	}
 
@@ -120,7 +120,7 @@ public class Solution {
 	}
 
 	public static void main(String[] args) {
-		Solution sol = new Solution(args[0]);
+		MightySolution sol = new MightySolution(args[0]);
 		sol.solve(args[1]);
 	}
 
